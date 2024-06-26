@@ -1,0 +1,173 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Calcular Edad" description="Página de calculadora de edad">
+  <main class="flex flex-col justify-center w-11/12 lg:w-7/12 mx-auto h-screen">
+    <div class="flex flex-col justify-between gap-5 min-h-[60vh] lg:min-h-[90vh] 
+              bg-white dark:bg-color-secundario-dark rounded-3xl shadow-md p-7 lg:p-14 w-full">
+      <form action="" class="grid grid-cols-3 text-black dark:text-white gap-6">
+        <div class="flex flex-col gap-4">
+          <label for="dia" class="tracking-widest">DIA</label>
+          <input
+            class="bg-white dark:bg-color-secundario-dark border-color-quaternario text-4xl font-bold border p-2
+                    rounded-md placeholder:font-bold placeholder:text-color-quaternario placeholder:text-4xl 
+                    focus:outline-none focus:ring-black  focus:ring-1"
+            type="number"
+            placeholder="DD"
+            id="dia"
+            required
+            max="31"
+            min="1"
+          />
+        </div>
+        <div class="flex flex-col gap-4">
+          <label for="mes" class="tracking-widest">MES</label>
+          <input
+            class="bg-white dark:bg-color-secundario-dark border-color-quaternario text-4xl font-bold border p-2 
+                    rounded-md placeholder:font-bold placeholder:text-color-quaternario placeholder:text-4xl 
+                    focus:outline-none focus:ring-black  focus:ring-1"
+            type="number"
+            placeholder="MM"
+            name="mes"
+            id="mes"
+            required
+            max="12"
+            min="1">
+        </div>
+        <div class="flex flex-col gap-4">
+          <label for="anio" class="tracking-widest">AÑO</label>
+          <input
+          class="bg-white dark:bg-color-secundario-dark border-color-quaternario text-4xl font-bold border p-2 
+                    rounded-md placeholder:font-bold placeholder:text-color-quaternario placeholder:text-4xl 
+                    focus:outline-none focus:ring-black  focus:ring-1"
+          type="number"
+          placeholder="YYYY"
+          name="anio"
+          id="anio"
+          required
+          max="2024"
+          min="1900"
+          />
+        </div>
+      </form>
+      <div class="flex items-center w-full my-0 sm:my-1">
+        <hr class="w-[90%] border bg-color-quaternario dark:bg-white rounded-md"></hr>
+        <button id="calcular" type="submit" class="bg-color-secundario border-color-quaternario text-white font-bold p-5 rounded-full">
+          <svg  xmlns="http://www.w3.org/2000/svg"  width="50"  height="50"  viewBox="0 0 24 24"  
+          fill="none"  stroke="currentColor"  stroke-width="4"  stroke-linecap="round"  stroke-linejoin="round"  
+          class="text-white icon icon-tabler icons-tabler-outline icon-tabler-arrow-down">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M18 13l-6 6" /><path d="M6 13l6 6" /></svg>
+        </button>
+      </div>
+      <div class="flex flex-col gap-10 sm:gap-0  content-between">
+        <div class="flex items-center gap-5">
+          <span id="anios" class="text-color-secundario font-extrabold italic text-6xl sm:text-8xl"> -- </span>
+          <p class="text-black dark:text-white font-extrabold italic text-6xl sm:text-8xl">años</p>
+        </div>
+        <div class="flex items-center gap-5">
+          <span id="meses" class="text-color-secundario font-extrabold italic text-6xl sm:text-8xl"> -- </span>
+          <p class="text-black dark:text-white font-extrabold italic text-6xl sm:text-8xl">meses</p>
+        </div>
+        <div class="flex items-center gap-5">
+          <span id="dias" class="text-color-secundario font-extrabold italic text-6xl sm:text-8xl"> -- </span>
+          <p class="text-black dark:text-white font-extrabold italic text-6xl sm:text-8xl">dias</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+<style>
+  /* Para ocultar las flechas en todos los inputs de tipo número */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0; 
+  }
+</style>
+<script>
+
+  // 📄 DOMContentLoaded es un evento que se ejecuta cuando el documento está cargado en el navegador 
+  document.addEventListener("DOMContentLoaded", () => {
+
+    // 📚 Llamaos a inputs, boto y spans para obtener sus valores mediante el id
+    const calcularBtn = document.getElementById("calcular") as HTMLButtonElement;
+    const diaInput = document.getElementById("dia") as HTMLInputElement;
+    const mesInput = document.getElementById("mes") as HTMLInputElement;
+    const anioInput = document.getElementById("anio") as HTMLInputElement;
+
+    const aniosSpan = document.getElementById("anios") as HTMLSpanElement;
+    const mesesSpan = document.getElementById("meses") as HTMLSpanElement;
+    const diasSpan = document.getElementById("dias") as HTMLSpanElement;
+
+    // ✅ Creamos una funcion click para el botón de calcular
+    calcularBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const dia = parseInt(diaInput.value);
+      const mes = parseInt(mesInput.value);
+      const anio = parseInt(anioInput.value);
+
+      /*
+      console.log(`Día ingresado: ${dia}`); 
+      console.log(`Mes ingresado: ${mes}`); 
+      console.log(`Año ingresado: ${anio}`);
+      */
+      
+
+      if (isNaN(dia) || isNaN(mes) || isNaN(anio)) {
+        alert("Por favor ingresa números válidos.");
+        return;
+      }
+
+      if (isValidDate(dia, mes, anio)) {
+
+        // 🎂 Crear la fecha de nacimiento ajustando el mes
+        const birthDate = new Date(anio, mes - 1, dia);
+        const { years, months, days } = calculateAge(birthDate, new Date());
+
+        aniosSpan.textContent = years.toString();
+        mesesSpan.textContent = months.toString();
+        diasSpan.textContent = days.toString();
+      } else {
+        alert("Por favor ingresa una fecha válida.");
+      }
+    });
+
+    function isValidDate(dia: number, mes: number, anio: number): boolean {
+
+      // 📝 Verificación de rangosde año, mes y día
+      if (anio < 1900 || anio > 2024 || mes < 1 || mes > 12 || dia < 1 || dia > 31) {
+        return false;
+      }
+
+      const date = new Date(anio, mes - 1, dia);
+      console.log(`Fecha creada: ${date}`); // Depuración
+      return (
+        date.getFullYear() === anio &&
+        date.getMonth() === mes - 1 &&
+        date.getDate() === dia
+      );
+    }
+
+    function calculateAge(birthDate: Date, currentDate: Date) {
+      let years = currentDate.getFullYear() - birthDate.getFullYear(); 
+      let months = currentDate.getMonth() - birthDate.getMonth(); 
+      let days = currentDate.getDate() - birthDate.getDate(); 
+
+      // Ajustar los meses y días si es necesario
+      if (days < 0) {
+        months--;
+        days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+      }
+
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      return { years, months, days };
+    }
+  });
+
+</script>
